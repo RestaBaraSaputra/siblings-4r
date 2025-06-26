@@ -7,18 +7,42 @@
   <link rel="stylesheet" href="style.css" />
   <script defer src="app.js"></script>
 </head>
-<body>
+<body class="lombok-guide-site">
+
   <header>
-    <h1>Jasa Guide Wisata Alam - Pulau Lombok</h1>
+    <h1 data-id="Jasa Guide Wisata Alam - Pulau Lombok" 
+        data-en="Nature Tour Guide Service - Lombok Island">
+      Jasa Guide Wisata Alam - Pulau Lombok
+    </h1>
     <button id="toggle-theme">🌙</button>
+    <p data-id="Klik gambar lingkaran di bawah ini untuk melihat destinasi wisata." 
+       data-en="Click the circle image below to view the travel destinations."
+       style="text-align:center; margin: 1rem; font-size: 1.1rem;">
+       Klik gambar lingkaran di bawah ini untuk melihat destinasi wisata.
+    </p>
   </header>
 
   <section class="circle-gallery">
-    <img src="img/icon_gunung.png" alt="Gunung" class="circle" data-target="gunung" />
-    <img src="img/icon_bukit.png" alt="Bukit" class="circle" data-target="bukit" />
-    <img src="img/icon_pantai.png" alt="Pantai" class="circle" data-target="pantai" />
-    <img src="img/icon_airterjun.png" alt="Air Terjun" class="circle" data-target="airterjun" />
-    <img src="img/icon_alam.png" alt="Alam" class="circle" data-target="alam" />
+    <div class="circle-item">
+      <img src="img/icon_gunung.png" alt="Gunung" class="circle" data-target="gunung" />
+      <p class="circle-label" data-id="Gunung" data-en="Mountain">Gunung</p>
+    </div>
+    <div class="circle-item">
+      <img src="img/icon_bukit.png" alt="Bukit" class="circle" data-target="bukit" />
+      <p class="circle-label" data-id="Bukit" data-en="Hill">Bukit</p>
+    </div>
+    <div class="circle-item">
+      <img src="img/icon_pantai.png" alt="Pantai" class="circle" data-target="pantai" />
+      <p class="circle-label" data-id="Pantai" data-en="Beach">Pantai</p>
+    </div>
+    <div class="circle-item">
+      <img src="img/icon_airterjun.png" alt="Air Terjun" class="circle" data-target="airterjun" />
+      <p class="circle-label" data-id="Air Terjun" data-en="Waterfall">Air Terjun</p>
+    </div>
+    <div class="circle-item">
+      <img src="img/icon_alam.png" alt="Alam" class="circle" data-target="alam" />
+      <p class="circle-label" data-id="Alam" data-en="Nature">Alam</p>
+    </div>
   </section>
 
   <section class="info-gallery">
@@ -27,6 +51,21 @@
       <p data-id="Gunung Rinjani - Pemandangan Puncak Luar biasa." data-en="Mount Rinjani - Amazing Peak View.">Gunung Rinjani - Pemandangan puncak luar biasa. </p>
       <img src="../img/gunung/rinjani2.jpg" alt="Pendakian Rinjani" />
       <p>Jalur pendakian dengan pemandu lokal berpengalaman.</p>
+
+      <!-- Estimasi Cuaca -->
+      <div class="weather-estimate" data-location="Gunung Rinjani">
+        Prakiraan cuaca: memuat...
+      </div>
+
+      <!-- Tombol Share -->
+      <div class="share-buttons">
+        <a href="#" class="share-wa" title="Bagikan ke WhatsApp">📱</a>
+        <a href="#" class="share-ig" title="Bagikan ke Instagram">📸</a>
+        <a href="#" class="share-tg" title="Bagikan ke Telegram">📨</a>
+        <a href="#" class="share-tw" title="Bagikan ke Twitter">🐦</a>
+        <a href="#" class="share-fb" title="Bagikan ke Facebook">📘</a>
+        <a href="#" class="share-tt" title="Bagikan ke TikTok">🎵</a>
+      </div>
     </div>
 
     <div class="info-card" id="bukit">
@@ -59,8 +98,30 @@
   </section>
 
   <footer>
-    <a href="https://wa.me/6281330597319" target="_blank" class="icon">📱 WhatsApp</a>
-    <a href="https://www.instagram.com/bara.sptraa?igsh=OGJybWtlN3AxYmpx" target="_blank" class="icon">📸 Instagram</a>
+    <p class="footer-text" data-id="Hubungi kami melalui:" data-en="Contact us via:">
+      Hubungi kami melalui:
+    </p>
+    <div class="social-icons">
+      <a href="https://wa.me/6281330597319" target="_blank" title="WhatsApp">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
+      </a>
+      <a href="https://www.instagram.com/bara.sptraa?igsh=OGJybWtlN3AxYmpx" target="_blank" title="Instagram">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" />
+      </a>
+      <a href="https://t.me/@restabarasaputra" target="_blank" title="Telegram">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+      </a>
+      <a href="https://twitter.com/yourusername" target="_blank" title="Twitter">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" />
+      </a>
+      <a href="https://facebook.com/yourusername" target="_blank" title="Facebook">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" />
+      </a>
+      <a href="https://www.tiktok.com/@yourusername" target="_blank" title="TikTok">
+        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046120.png" alt="TikTok" />
+      </a>
+    </div>
   </footer>
+
 </body>
 </html>
