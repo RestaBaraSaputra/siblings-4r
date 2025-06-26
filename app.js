@@ -1,6 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
   const circles = document.querySelectorAll(".circle");
-  const themeToggle = document.getElementById("toggle-theme");
+  const themeToggle = document.getElementById("toggle-theme") || document.createElement("button");
+
+  // === ESTIMASI CUACA ===
+const API_KEY = 'ISI_DENGAN_API_KEY_MU'; // <-- Ganti dengan API key dari OpenWeatherMap
+const weatherBoxes = document.querySelectorAll(".weather-estimate");
+
+weatherBoxes.forEach(box => {
+  const location = box.dataset.location || "Lombok";
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${API_KEY}&units=metric&lang=id`)
+    .then(res => res.json())
+    .then(data => {
+      const temp = data.main?.temp;
+      const desc = data.weather?.[0]?.description;
+      if (temp && desc) {
+        box.textContent = `Prakiraan cuaca: ${desc}, ${temp}°C`;
+      } else {
+        box.textContent = `Cuaca tidak tersedia`;
+      }
+    })
+    .catch(() => {
+      box.textContent = `Gagal memuat cuaca`;
+    });
+});
+
 
   // Buat wrapper tombol di kanan atas
   const topRightWrapper = document.createElement("div");
@@ -9,30 +32,43 @@ document.addEventListener("DOMContentLoaded", () => {
   topRightWrapper.style.right = "1rem";
   topRightWrapper.style.display = "flex";
   topRightWrapper.style.gap = "0.5rem";
+  topRightWrapper.style.zIndex = "1000";
 
-  // Ubah ikon mode gelap 🌙 / ☀️
+  // Styling umum tombol aksesibilitas
+  const buttonStyle = btn => {
+    btn.style.fontSize = "1.8rem";
+    btn.style.padding = "0.6rem";
+    btn.style.border = "none";
+    btn.style.borderRadius = "0.5rem";
+    btn.style.cursor = "pointer";
+    btn.style.background = "rgba(0,0,0,0.05)";
+  };
+
+  // Tombol dark mode 🌙
+  themeToggle.id = "toggle-theme";
   themeToggle.textContent = "🌙";
   themeToggle.title = "Ubah tema gelap/terang";
+  buttonStyle(themeToggle);
 
-  // Tambahkan tombol bahasa dengan ikon
+  // Tombol bahasa 🇬🇧
   const langToggle = document.createElement("button");
   langToggle.id = "toggle-lang";
   langToggle.textContent = "🇬🇧";
   langToggle.title = "Ubah bahasa Indonesia / Inggris";
+  buttonStyle(langToggle);
 
-  // Tambahkan tombol mode buta warna 👓
+  // Tombol buta warna 👓
   const colorblindToggle = document.createElement("button");
   colorblindToggle.id = "toggle-colorblind";
   colorblindToggle.textContent = "👓";
   colorblindToggle.title = "Mode Buta Warna";
+  buttonStyle(colorblindToggle);
 
-  topRightWrapper.appendChild(themeToggle);
-  topRightWrapper.appendChild(langToggle);
-  topRightWrapper.appendChild(colorblindToggle);
+  topRightWrapper.append(themeToggle, langToggle, colorblindToggle);
   document.body.appendChild(topRightWrapper);
 
+  // Bahasa
   let currentLang = "id";
-
   const translations = {
     id: {
       cuaca: "Cuaca Lombok",
@@ -48,12 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  langToggle.addEventListener("click", () => {
-    currentLang = currentLang === "id" ? "en" : "id";
-    langToggle.textContent = currentLang === "id" ? "🇬🇧" : "🇮🇩";
-    updateLanguage();
-  });
-
   function updateLanguage() {
     document.querySelectorAll("[data-id][data-en]").forEach(el => {
       el.textContent = el.dataset[currentLang] || el.textContent;
@@ -63,12 +93,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (galleryHeader) galleryHeader.textContent = translations[currentLang].galleryTitle;
   }
 
-  // Search bar
+  langToggle.addEventListener("click", () => {
+    currentLang = currentLang === "id" ? "en" : "id";
+    langToggle.textContent = currentLang === "id" ? "🇬🇧" : "🇮🇩";
+    updateLanguage();
+  });
+
+  // Input pencarian
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.placeholder = translations[currentLang].search;
   searchInput.style.margin = "1rem";
   searchInput.style.padding = "0.5rem";
+  searchInput.style.fontSize = "1rem";
+  searchInput.style.width = "90%";
+  searchInput.style.maxWidth = "400px";
+  searchInput.style.display = "block";
+  searchInput.style.marginInline = "auto";
   document.body.insertBefore(searchInput, document.body.firstChild);
 
   searchInput.addEventListener("input", () => {
@@ -76,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     circles.forEach(circle => {
       const targetId = circle.getAttribute("data-target");
       const targetCard = document.getElementById(targetId);
-      const text = targetCard.textContent.toLowerCase();
+      const text = targetCard?.textContent.toLowerCase() || "";
       if (text.includes(query)) {
         circle.style.display = "inline-block";
         circle.classList.add("fade-in");
@@ -86,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Animasi fade-in
+  // Fade-in animasi
   const style = document.createElement("style");
   style.textContent = `
     .fade-in {
@@ -99,16 +140,14 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   document.head.appendChild(style);
 
-  // Modal Gallery
+  // Modal galeri
   const modal = document.createElement("div");
   modal.classList.add("modal");
   modal.innerHTML = `
     <div class="modal-content">
       <span class="close-btn">&times;</span>
       <div class="modal-progress-container"></div>
-      <div class="modal-images-wrapper">
-        <div class="modal-images"></div>
-      </div>
+      <div class="modal-images-wrapper"><div class="modal-images"></div></div>
       <div class="modal-dots"></div>
       <button class="fullscreen-toggle">⛶</button>
     </div>
@@ -122,10 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalProgress = modal.querySelector(".modal-progress-container");
   const fullscreenBtn = modal.querySelector(".fullscreen-toggle");
 
-  let currentIndex = 0;
-  let slides = [];
-  let autoScrollTimer;
-  let progressIntervals = [];
+  let currentIndex = 0, slides = [], autoScrollTimer, progressIntervals = [];
 
   function updateSlide() {
     const width = modalImagesWrapper.clientWidth;
@@ -152,9 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let width = 0;
     const interval = setInterval(() => {
       width += 0.4;
-      if (width >= 100) {
-        clearInterval(interval);
-      }
+      if (width >= 100) clearInterval(interval);
       bar.style.width = `${width}%`;
     }, 100);
     progressIntervals.push(interval);
@@ -209,17 +243,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   closeBtn.addEventListener("click", closeModal);
-
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
+  window.addEventListener("click", e => { if (e.target === modal) closeModal(); });
 
   circles.forEach(circle => {
     circle.addEventListener("click", () => {
       const targetId = circle.getAttribute("data-target");
       const targetCard = document.getElementById(targetId);
-      const images = targetCard.querySelectorAll("img");
-      const paragraphs = targetCard.querySelectorAll("p");
+      const images = targetCard?.querySelectorAll("img") || [];
+      const paragraphs = targetCard?.querySelectorAll("p") || [];
       slides = Array.from(images).map((img, i) => ({
         image: img.src,
         text: paragraphs[i]?.textContent || "",
@@ -230,9 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 🌙 DARK MODE toggle + localStorage
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
+  // 🌙 DARK MODE
+  if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark-mode");
     themeToggle.textContent = "☀️";
   }
@@ -244,9 +274,8 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("theme", isDark ? "dark" : "light");
   });
 
-  // 👓 COLORBLIND MODE toggle + localStorage
-  const savedColorblind = localStorage.getItem("colorblind");
-  if (savedColorblind === "true") {
+  // 👓 COLORBLIND MODE
+  if (localStorage.getItem("colorblind") === "true") {
     document.body.classList.add("colorblind-mode");
   }
 
@@ -256,6 +285,29 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("colorblind", isEnabled);
   });
 
-  // Inisialisasi bahasa di awal
   updateLanguage();
+});
+
+// === SHARE TO SOCIAL MEDIA ===
+const shareButtons = document.querySelectorAll(".share-buttons");
+
+shareButtons.forEach(buttonGroup => {
+  const card = buttonGroup.closest(".info-card");
+  const locationId = card?.id || "";
+  const locationName = card.querySelector("p")?.textContent || "Destinasi Lombok";
+  const shareText = `Lihat destinasi wisata Lombok: ${locationName}`;
+  const url = window.location.href + `#${locationId}`;
+
+  // WhatsApp
+  buttonGroup.querySelector(".share-wa")?.setAttribute("href", `https://wa.me/?text=${encodeURIComponent(shareText + " " + url)}`);
+  // Instagram (tidak bisa langsung post, arahkan ke profil)
+  buttonGroup.querySelector(".share-ig")?.setAttribute("href", `https://www.instagram.com/`);
+  // Telegram
+  buttonGroup.querySelector(".share-tg")?.setAttribute("href", `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`);
+  // Twitter
+  buttonGroup.querySelector(".share-tw")?.setAttribute("href", `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`);
+  // Facebook
+  buttonGroup.querySelector(".share-fb")?.setAttribute("href", `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
+  // TikTok (hanya bisa arahkan ke upload, tidak langsung share konten)
+  buttonGroup.querySelector(".share-tt")?.setAttribute("href", `https://www.tiktok.com/upload`);
 });
